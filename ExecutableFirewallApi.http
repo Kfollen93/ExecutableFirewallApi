@@ -1,0 +1,9 @@
+@ExecutableFirewallApi_HostAddress = https://localhost:7185
+
+POST {{ExecutableFirewallApi_HostAddress}}/api/scan
+Content-Type: application/json
+
+{
+  "folderPath": "D:\\Dawnwalker"
+}
+###
