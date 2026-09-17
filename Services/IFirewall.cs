@@ -1,4 +1,5 @@
 ﻿using ExecutableFirewallApi.Models;
+using ExecutableFirewallApi.Models.Enums;
 using ExecutableFirewallApi.Models.Responses;
 
 namespace ExecutableFirewallApi.Services
@@ -7,7 +8,7 @@ namespace ExecutableFirewallApi.Services
     {
         Task<FirewallStatus> GetStatusAsync(string programPath);
 
-        Task<bool> BlockAsync(string programPath);
+        Task<FirewallBlockOutcome> BlockAsync(string programPath);
 
         Task<bool> UnblockAsync(string programPath);
 
