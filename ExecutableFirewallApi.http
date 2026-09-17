@@ -4,6 +4,6 @@ POST {{ExecutableFirewallApi_HostAddress}}/api/scan
 Content-Type: application/json
 
 {
-  "folderPath": "D:\\Dawnwalker"
+  "folderPath": "D:\\TestExecutables"
 }
 ###
