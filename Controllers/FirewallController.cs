@@ -56,22 +56,30 @@ namespace ExecutableFirewallApi.Controllers
         {
             var executables = _scanner.Scan(request.FolderPath);
             int unblocked = 0;
+            int alreadyUnblocked = 0;
             int failed = 0;
 
             foreach (var exe in executables)
             {
-                bool success = await _firewall.UnblockAsync(exe.FullPath);
-                if (success)
+                FirewallUnblockOutcome result = await _firewall.UnblockAsync(exe.FullPath);
+
+                switch (result)
                 {
-                    unblocked++;
-                }
-                else
-                {
-                    failed++;
+                    case FirewallUnblockOutcome.Unblocked:
+                        unblocked++;
+                        break;
+
+                    case FirewallUnblockOutcome.AlreadyUnblocked:
+                        alreadyUnblocked++;
+                        break;
+
+                    case FirewallUnblockOutcome.Failed:
+                        failed++;
+                        break;
                 }
             }
 
-            var response = new UnblockResult(executables.Count, unblocked, failed);
+            var response = new UnblockResult(executables.Count, unblocked, alreadyUnblocked, failed);
             return Ok(response);
         }
     }

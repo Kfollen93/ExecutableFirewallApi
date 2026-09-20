@@ -10,7 +10,7 @@ namespace ExecutableFirewallApi.Services
 
         Task<FirewallBlockOutcome> BlockAsync(string programPath);
 
-        Task<bool> UnblockAsync(string programPath);
+        Task<FirewallUnblockOutcome> UnblockAsync(string programPath);
 
         Task<IReadOnlyCollection<FirewallRuleInfo>> GetManagedRulesAsync();
     }

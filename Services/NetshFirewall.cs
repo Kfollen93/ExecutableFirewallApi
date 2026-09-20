@@ -46,7 +46,7 @@ namespace ExecutableFirewallApi.Services
             throw new NotImplementedException();
         }
 
-        public async Task<bool> UnblockAsync(string programPath)
+        public async Task<FirewallUnblockOutcome> UnblockAsync(string programPath)
         {
             string shortHash = PathHash.GetShortPathHash(programPath);
             string fileName = Path.GetFileName(programPath);
@@ -55,6 +55,12 @@ namespace ExecutableFirewallApi.Services
 
             bool inboundExists = await FirewallRuleExistsAsync(inboundRuleName);
             bool outboundExists = await FirewallRuleExistsAsync(outboundRuleName);
+
+            if (!inboundExists && !outboundExists)
+            {
+                return FirewallUnblockOutcome.AlreadyUnblocked;
+            }
+
             bool inBoundUnblocked = true;
             bool outBoundUnblocked = true;
 
@@ -68,7 +74,12 @@ namespace ExecutableFirewallApi.Services
                 outBoundUnblocked = await DeleteFirewallRuleAsync(outboundRuleName);
             }
 
-            return inBoundUnblocked && outBoundUnblocked;
+            if (inBoundUnblocked && outBoundUnblocked)
+            {
+                return FirewallUnblockOutcome.Unblocked;
+            }
+
+            return FirewallUnblockOutcome.Failed;
         }
 
         private async Task<bool> FirewallRuleExistsAsync(string ruleName)
