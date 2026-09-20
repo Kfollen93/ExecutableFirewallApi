@@ -1,6 +1,4 @@
-﻿using ExecutableFirewallApi.Models;
-using ExecutableFirewallApi.Models.Enums;
-using ExecutableFirewallApi.Models.Responses;
+﻿using ExecutableFirewallApi.Models.Enums;
 using ExecutableFirewallApi.Utilities;
 using System.Diagnostics;
 
@@ -34,16 +32,6 @@ namespace ExecutableFirewallApi.Services
             }
 
             return FirewallBlockOutcome.Failed;
-        }
-
-        public Task<IReadOnlyCollection<FirewallRuleInfo>> GetManagedRulesAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<FirewallStatus> GetStatusAsync(string programPath)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<FirewallUnblockOutcome> UnblockAsync(string programPath)
