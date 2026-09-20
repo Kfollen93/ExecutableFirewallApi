@@ -7,3 +7,12 @@ Content-Type: application/json
   "folderPath": "D:\\TestExecutables"
 }
 ###
+
+POST {{ExecutableFirewallApi_HostAddress}}/api/firewall
+Content-Type: application/json
+
+{
+  "folderPath": "D:\\TestExecutables"
+}
+
+###
