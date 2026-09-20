@@ -10,12 +10,10 @@ namespace ExecutableFirewallApi.Controllers
     public class ScanController : ControllerBase
     {
         private readonly IExecutableScanner _executableScanner;
-        private readonly IFirewall _firewall;
 
-        public ScanController(IExecutableScanner executableScanner, IFirewall firewall)
+        public ScanController(IExecutableScanner executableScanner)
         {
             _executableScanner = executableScanner;
-            _firewall = firewall;
         }
 
         [HttpPost]
