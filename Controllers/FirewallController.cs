@@ -19,7 +19,7 @@ namespace ExecutableFirewallApi.Controllers
             _firewall = firewall;
         }
 
-        [HttpPost]
+        [HttpPost("block")]
         public async Task<ActionResult<BlockResult>> BlockAsync(FolderRequest request)
         {
             var executables = _scanner.Scan(request.FolderPath);
@@ -48,6 +48,30 @@ namespace ExecutableFirewallApi.Controllers
             }
 
             var response = new BlockResult(executables.Count, newlyBlocked, alreadyBlocked, failed);
+            return Ok(response);
+        }
+
+        [HttpPost("unblock")]
+        public async Task<ActionResult<UnblockResult>> UnblockAsync(FolderRequest request)
+        {
+            var executables = _scanner.Scan(request.FolderPath);
+            int unblocked = 0;
+            int failed = 0;
+
+            foreach (var exe in executables)
+            {
+                bool success = await _firewall.UnblockAsync(exe.FullPath);
+                if (success)
+                {
+                    unblocked++;
+                }
+                else
+                {
+                    failed++;
+                }
+            }
+
+            var response = new UnblockResult(executables.Count, unblocked, failed);
             return Ok(response);
         }
     }

@@ -46,9 +46,29 @@ namespace ExecutableFirewallApi.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> UnblockAsync(string programPath)
+        public async Task<bool> UnblockAsync(string programPath)
         {
-            throw new NotImplementedException();
+            string shortHash = PathHash.GetShortPathHash(programPath);
+            string fileName = Path.GetFileName(programPath);
+            string inboundRuleName = $"ExecutableBlock IN - {fileName} - {shortHash}";
+            string outboundRuleName = $"ExecutableBlock OUT - {fileName} - {shortHash}";
+
+            bool inboundExists = await FirewallRuleExistsAsync(inboundRuleName);
+            bool outboundExists = await FirewallRuleExistsAsync(outboundRuleName);
+            bool inBoundUnblocked = true;
+            bool outBoundUnblocked = true;
+
+            if (inboundExists)
+            {
+                inBoundUnblocked = await DeleteFirewallRuleAsync(inboundRuleName);
+            }
+
+            if (outboundExists)
+            {
+                outBoundUnblocked = await DeleteFirewallRuleAsync(outboundRuleName);
+            }
+
+            return inBoundUnblocked && outBoundUnblocked;
         }
 
         private async Task<bool> FirewallRuleExistsAsync(string ruleName)
@@ -146,6 +166,52 @@ namespace ExecutableFirewallApi.Services
                 if (process.ExitCode != 0)
                 {
                     Console.WriteLine($"netsh failed with exit code {process.ExitCode}");
+                    Console.WriteLine($"Output: {output}");
+                    Console.WriteLine($"Error: {error}");
+                    return false;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private async Task<bool> DeleteFirewallRuleAsync(string ruleName)
+        {
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "netsh",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                startInfo.ArgumentList.Add("advfirewall");
+                startInfo.ArgumentList.Add("firewall");
+                startInfo.ArgumentList.Add("delete");
+                startInfo.ArgumentList.Add("rule");
+                startInfo.ArgumentList.Add($"name={ruleName}");
+
+                using Process? process = Process.Start(startInfo);
+
+                if (process == null)
+                {
+                    return false;
+                }
+
+                var output = await process.StandardOutput.ReadToEndAsync();
+                var error = await process.StandardError.ReadToEndAsync();
+                await process.WaitForExitAsync();
+
+                if (process.ExitCode != 0)
+                {
+                    Console.WriteLine($"Failed to delete rule: {ruleName}");
                     Console.WriteLine($"Output: {output}");
                     Console.WriteLine($"Error: {error}");
                     return false;

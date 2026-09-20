@@ -6,9 +6,18 @@ Content-Type: application/json
 {
   "folderPath": "D:\\TestExecutables"
 }
+
 ###
 
-POST {{ExecutableFirewallApi_HostAddress}}/api/firewall
+POST {{ExecutableFirewallApi_HostAddress}}/api/firewall/block
+Content-Type: application/json
+
+{
+  "folderPath": "D:\\TestExecutables"}
+
+###
+
+POST {{ExecutableFirewallApi_HostAddress}}/api/firewall/unblock
 Content-Type: application/json
 
 {
