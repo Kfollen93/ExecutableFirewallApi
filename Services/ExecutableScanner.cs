@@ -35,11 +35,13 @@ namespace ExecutableFirewallApi.Services
 
             foreach (string programFile in programFiles)
             {
-                var executableInfo = new ExecutableInfo(
-                    Guid.NewGuid().ToString(),
-                    Path.GetFileName(programFile),
-                    programFile
-                );
+                var executableInfo = new ExecutableInfo
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    FileName = Path.GetFileName(programFile),
+                    FullPath = programFile
+                };
+
                 executableInfos.Add(executableInfo);
             }
 
