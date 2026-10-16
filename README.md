@@ -2,7 +2,11 @@
 
 A small .NET API for scanning folders for executables and managing Windows Firewall rules.
 
-I originally built this as a console utility for blocking network access for downloaded game development projects during testing. I moved it into an API to separate file discovery from firewall operations, and added support for removing the rules after I was done testing. This is primarily just an internal tool that I use before doing game testing to give myself a little extra security - it is NOT intended to be a sandbox virus environment, but rather just block telemetry/communication.
+I built this for testing game projects shared in Discord servers. I usually check downloads with VirusTotal, but also wanted a quick way to block their network access while testing.
+
+It started as a console app that added firewall rules. I later moved it into an API, separated file discovery from firewall operations, and added support for removing the rules afterward.
+
+This is a personal tool for blocking network communication, not a sandbox or a guarantee that an executable is safe to run.
 
 ## How it works
 
@@ -14,14 +18,21 @@ I originally built this as a console utility for blocking network access for dow
 
 Controllers handle HTTP requests, ExecutableScanner handles file discovery, and NetshFirewall handles firewall operations. Services are registered through dependency injection.
 
-# Endpoints
+## Endpoints
 
-`POST` -> `/api/scan` -> List executables in a folder and its subfolders.
-`POST` -> `/api/firewall/block` -> Add inbound and outbound block rules.
-`POST` -> `/api/firewall/unblock` -> Remove the application's matching rules.
+- `POST` -> `/api/scan` -> List executables in a folder and its subfolders.
+- `POST` -> `/api/firewall/block` -> Add inbound and outbound block rules.
+- `POST` -> `/api/firewall/unblock` -> Remove the application's matching rules.
 
-### Requirements/Backend
+## Requirements
 
 - Windows with Windows Firewall and netsh
 - .NET 10
 - Administrator privileges to add or remove firewall rules
+
+## Known Limitations
+
+This project currently does what I need for my own testing, but there are a couple of things I would improve:
+
+- Unblocking relies on files still being in their original locations. Moving or deleting them can leave firewall rules behind.
+- Invalid folder paths return empty results, and failed firewall lookups aren't distinguished from missing rules.
